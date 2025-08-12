@@ -1,0 +1,9 @@
+id,title,location,required_skills,description
+JD_1,Job_1,Pune,"sql,pandas,nlp,c++","We are looking for skills sql,pandas,nlp,c++"
+JD_2,Job_2,Pune,"tensorflow,c++,docker,nlp,aws,pandas","We are looking for skills tensorflow,c++,docker,nlp,aws,pandas"
+JD_3,Job_3,Remote,"python,pandas,tensorflow,aws","We are looking for skills python,pandas,tensorflow,aws"
+JD_4,Job_4,Remote,"aws,docker,ml,java,python","We are looking for skills aws,docker,ml,java,python"
+JD_5,Job_5,Mumbai,"java,nlp,c++,pandas","We are looking for skills java,nlp,c++,pandas"
+JD_6,Job_6,Mumbai,"nlp,java,sql,aws","We are looking for skills nlp,java,sql,aws"
+JD_7,Job_7,Pune,"aws,nlp,tensorflow,sql","We are looking for skills aws,nlp,tensorflow,sql"
+JD_8,Job_8,Mumbai,"nlp,sql,react,tensorflow,java,aws","We are looking for skills nlp,sql,react,tensorflow,java,aws"

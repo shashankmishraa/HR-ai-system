@@ -1,0 +1,2 @@
+"base_score","cv_id","cv_name","jd_id","jd_title","location_match","rank","resume_snippet","score","skill_overlap"
+"0.6539276838302612","2b1f8a72","Candidate_38","JD_4","Job_4","True","5","Candidate_38 with skills docker,java,nlp,python,ml,sql and 35 months exp. Worked on ML projects.","0.9039276838302612","4"

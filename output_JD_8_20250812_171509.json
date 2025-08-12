@@ -1,0 +1,62 @@
+﻿[
+    {
+        "base_score":  0.675453245639801,
+        "cv_id":  "2ce30ddf",
+        "cv_name":  "Candidate_5",
+        "jd_id":  "JD_8",
+        "jd_title":  "Job_8",
+        "location_match":  true,
+        "rank":  4,
+        "resume_snippet":  "Candidate_5 with skills c++,sql,aws,tensorflow,nlp and 29 months exp. Worked on ML projects.",
+        "score":  0.925453245639801,
+        "skill_overlap":  4
+    },
+    {
+        "base_score":  0.6553060412406921,
+        "cv_id":  "8514e785",
+        "cv_name":  "Candidate_18",
+        "jd_id":  "JD_8",
+        "jd_title":  "Job_8",
+        "location_match":  true,
+        "rank":  6,
+        "resume_snippet":  "Candidate_18 with skills sql,aws,tensorflow,react,docker,pandas and 94 months exp. Worked on ML projects.",
+        "score":  0.9053060412406921,
+        "skill_overlap":  4
+    },
+    {
+        "base_score":  0.6365803480148315,
+        "cv_id":  "d55e017c",
+        "cv_name":  "Candidate_30",
+        "jd_id":  "JD_8",
+        "jd_title":  "Job_8",
+        "location_match":  true,
+        "rank":  10,
+        "resume_snippet":  "Candidate_30 with skills sql,tensorflow,aws,java,c++,ml and 83 months exp. Worked on ML projects.",
+        "score":  0.8865803480148315,
+        "skill_overlap":  4
+    },
+    {
+        "base_score":  0.6830732822418213,
+        "cv_id":  "942cab20",
+        "cv_name":  "Candidate_31",
+        "jd_id":  "JD_8",
+        "jd_title":  "Job_8",
+        "location_match":  false,
+        "rank":  1,
+        "resume_snippet":  "Candidate_31 with skills sql,react,java,pandas,tensorflow and 20 months exp. Worked on ML projects.",
+        "score":  0.8830732822418212,
+        "skill_overlap":  4
+    },
+    {
+        "base_score":  0.6820459365844727,
+        "cv_id":  "76a49d76",
+        "cv_name":  "Candidate_10",
+        "jd_id":  "JD_8",
+        "jd_title":  "Job_8",
+        "location_match":  false,
+        "rank":  2,
+        "resume_snippet":  "Candidate_10 with skills aws,nlp,react,c++,docker,java and 25 months exp. Worked on ML projects.",
+        "score":  0.8820459365844726,
+        "skill_overlap":  4
+    }
+]

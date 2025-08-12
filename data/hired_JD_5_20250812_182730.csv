@@ -1,0 +1,2 @@
+"base_score","cv_id","cv_name","jd_id","jd_title","location_match","rank","resume_snippet","score","skill_overlap"
+"0.6319963932037354","32291ab4","Candidate_23","JD_5","Job_5","True","3","Candidate_23 with skills python,c++,nlp,pandas and 113 months exp. Worked on ML projects.","0.8319963932037354","3"

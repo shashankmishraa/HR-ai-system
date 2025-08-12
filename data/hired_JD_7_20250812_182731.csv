@@ -1,0 +1,2 @@
+"base_score","cv_id","cv_name","jd_id","jd_title","location_match","rank","resume_snippet","score","skill_overlap"
+"0.7455470561981201","2ce30ddf","Candidate_5","JD_7","Job_7","True","1","Candidate_5 with skills c++,sql,aws,tensorflow,nlp and 29 months exp. Worked on ML projects.","0.9955470561981201","4"

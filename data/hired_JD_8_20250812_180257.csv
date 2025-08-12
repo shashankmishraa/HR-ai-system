@@ -1,0 +1,2 @@
+"cv_id","cv_name","score","skill_overlap","location_match","alignment","similarity","match_score","sentiment","explanation","timestamp"
+"2ce30ddf","Candidate_5",,,,"1.0","0.8441587388515472","0.790661909977595","0.0","Count: 5; Length: 5; LongLength: 5; Rank: 1; SyncRoot: similarity: 0.844 skill_overlap: 4 experience_months: 29 location_match: True baseline_score: 0.791; IsReadOnly: False; IsFixedSize: True; IsSynchronized: False;","2025-08-12T12:32:57.884545"
