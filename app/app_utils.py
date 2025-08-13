@@ -4,7 +4,7 @@ import pandas as pd
 from utils.text_preproc import clean_text, extract_skills, parse_experience, education_score
 from utils.embedding import embed_corpus
 from utils.sentiment import sentiment_score
-from utils.rl_agent import discretize_state, train_q, save_q_table, load_q_table, select_action_from_q
+from utils.rl_agent import train_q, save_q_table, load_q_table, decide_action
 import numpy as np
 from datetime import datetime
 Q_TABLE_PATH = os.path.join('models','q_table.pkl')

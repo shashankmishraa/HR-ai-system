@@ -3,26 +3,28 @@ import os
 from flask import Flask, request, jsonify
 import pandas as pd
 
-# import the evaluation function (from your app helper)
 from app.app_utils import evaluate_candidate
 from utils.matcher import compute_matches
+from utils.rl_agent import load_q_table, decide_action
 
 app = Flask(__name__)
 
-# paths to CSVs (calculated relative to project root)
+# ---- Paths to CSVs (relative to project root) ----
 ROOT = os.path.dirname(os.path.dirname(__file__))
 DATA_CVS = os.path.join(ROOT, "data", "sample_cvs.csv")
 DATA_JDS = os.path.join(ROOT, "data", "sample_jds.csv")
 DATA_FEEDBACKS = os.path.join(ROOT, "data", "sample_feedbacks.csv")
 
+# Try to load a previously trained Q-table (optional)
+Q_TABLE = load_q_table()  # returns None if not found; we fall back to a rule
 
+# ---- Data helpers ----
 def load_cv_by_id(cv_id):
     cvs = pd.read_csv(DATA_CVS)
     row = cvs[cvs["id"] == cv_id]
     if row.empty:
         return None
     return row.iloc[0].to_dict()
-
 
 def load_jd_by_id(jd_id):
     jds = pd.read_csv(DATA_JDS)
@@ -31,27 +33,30 @@ def load_jd_by_id(jd_id):
         return None
     return row.iloc[0].to_dict()
 
-
 def load_feedbacks_for_candidate(cv_id):
     if not os.path.exists(DATA_FEEDBACKS):
         return []
     fb = pd.read_csv(DATA_FEEDBACKS)
-    texts = fb[fb["candidate_id"] == cv_id]["feedback_text"].dropna().astype(str).tolist()
-    return texts
+    return (
+        fb[fb["candidate_id"] == cv_id]["feedback_text"]
+        .dropna()
+        .astype(str)
+        .tolist()
+    )
 
+# ---- Routes ----
 
 @app.route("/evaluate", methods=["POST"])
 def evaluate():
     """
-    Accepts either:
+    Accept either:
       - cv_text + jd_text
-      - OR cv_id + jd_id  (looks up the texts and metadata from data/*.csv)
-    Optional: feedbacks list in payload.
-    Returns evaluation dict from evaluate_candidate + ensures cv_id/cv_name/jd_id/jd_title present.
+      - or cv_id + jd_id  (auto-lookup from data/*.csv)
+    Optional: feedbacks list.
+    Returns: evaluation dict (from evaluate_candidate) with cv/jd metadata filled.
     """
     payload = request.get_json() or {}
 
-    # prefer IDs if passed
     cv_id = payload.get("cv_id") or payload.get("candidate_id")
     jd_id = payload.get("jd_id") or payload.get("job_id")
 
@@ -61,7 +66,6 @@ def evaluate():
     jd_meta = payload.get("jd_meta", {})
     feedbacks = payload.get("feedbacks", [])
 
-    # If cv_id given, load CV row and populate cv_text / cv_meta
     if cv_id:
         cv_row = load_cv_by_id(cv_id)
         if cv_row:
@@ -74,11 +78,9 @@ def evaluate():
                 "education": cv_row.get("education", ""),
                 "skills": cv_row.get("skills", "")
             })
-        # if feedbacks not provided, attempt to fetch from feedbacks CSV
         if not feedbacks:
             feedbacks = load_feedbacks_for_candidate(cv_id)
 
-    # If jd_id given, load JD row and populate jd_text / jd_meta
     if jd_id:
         jd_row = load_jd_by_id(jd_id)
         if jd_row:
@@ -90,10 +92,9 @@ def evaluate():
                 "required_skills": jd_row.get("required_skills", "")
             })
 
-    # Call the core evaluation function
     result = evaluate_candidate(cv_text, jd_text, cv_meta=cv_meta, jd_meta=jd_meta, feedback_texts=feedbacks)
 
-    # Ensure returned payload contains IDs/names for clarity in demo
+    # Ensure clarity fields:
     result["cv_id"] = cv_meta.get("id", cv_id or "")
     result["cv_name"] = cv_meta.get("name", result.get("cv_name", ""))
     result["jd_id"] = jd_meta.get("id", jd_id or "")
@@ -101,14 +102,38 @@ def evaluate():
 
     return jsonify(result)
 
+@app.route("/decide", methods=["POST"])
+def decide():
+    """
+    Same payload as /evaluate, but returns an extra RL decision:
+    {
+      ... <evaluate fields> ...,
+      "rl_action": "HIRE" | "REJECT" | "ASSIGN_TASK" | "HOLD",
+      "decision_source": "RL" | "RULE_FALLBACK"
+    }
+    """
+    payload = request.get_json() or {}
+
+    # Reuse evaluate() logic to compute features
+    resp = app.test_client().post("/evaluate", json=payload)
+    if resp.status_code != 200:
+        return jsonify({"error": "evaluation failed"}), 400
+    eval_result = resp.get_json()
+
+    # Decide action via RL (or fallback rule if no Q-table)
+    rl = decide_action(eval_result, Q=Q_TABLE, prev_action="REJECT")
+    src = "RL" if Q_TABLE is not None else "RULE_FALLBACK"
+
+    eval_result["rl_action"] = rl
+    eval_result["decision_source"] = src
+    return jsonify(eval_result)
 
 @app.route("/top_candidates", methods=["GET"])
 def top_candidates():
     """
     Query params:
       - jd_id (optional): filter to this JD
-      - top_n (optional, default 10)
-    Returns list of matches (ranked) with some metadata and a resume_snippet.
+      - top_n (optional): default 10
     """
     jd_id = request.args.get("jd_id")
     top_n = int(request.args.get("top_n", 10))
@@ -117,15 +142,12 @@ def top_candidates():
     jds = pd.read_csv(DATA_JDS)
 
     matches = compute_matches(cvs, jds, top_k=top_n)
-
     if jd_id:
         matches = matches[matches["jd_id"] == jd_id]
 
-    # Sort by rank and build output
     matches = matches.sort_values("rank")
     out = []
     for _, r in matches.iterrows():
-        # safe extraction of resume snippet
         cv_row = cvs[cvs["id"] == r["cv_id"]]
         snippet = ""
         if not cv_row.empty:
@@ -142,16 +164,12 @@ def top_candidates():
             "location_match": bool(r.get("location_match", 0)),
             "resume_snippet": snippet
         })
-
     return jsonify(out)
-
 
 @app.route("/health", methods=["GET"])
 def health():
     return jsonify({"status": "ok"})
 
-
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    # Run as module: python -m app.api  (recommended)
     app.run(host="0.0.0.0", port=port, debug=True)
