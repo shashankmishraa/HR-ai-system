@@ -1,7 +1,7 @@
 # ============================================
 # run_demo.ps1  —  Top-5 view + RL decision + single hire save
 # Requires your Flask API running locally (http://127.0.0.1:5000)
-# Saves ONLY hired rows into C:\Task_Aiml_Intern\data\hired_candidates.csv (overwrite each run)
+# Saves ONLY hired rows into C:\Users\shash\OneDrive\Desktop\HR-ai-system-main\data\hired_candidates.csv (overwrite each run)
 # ============================================
 
 Set-StrictMode -Version Latest
@@ -9,7 +9,7 @@ $ErrorActionPreference = "Stop"
 
 # ---- Config ----
 $ApiBase   = "http://127.0.0.1:5000"
-$DataDir   = "C:\Task_Aiml_Intern\data"
+$DataDir   = "C:\Users\shash\OneDrive\Desktop\HR-ai-system-main\data"
 $JdCsvPath = Join-Path $DataDir "sample_jds.csv"
 $OutCsv    = Join-Path $DataDir "hired_candidates.csv"
 
